@@ -2,13 +2,15 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.routes import issues
 from app.middleware.timer import add_process_time_header
+import os
+import uvicorn
 
 app = FastAPI(title="EduBridge AI API")
 
-# Middleware တပ်ဆင်ခြင်း
+# Middleware 
 app.middleware("http")(add_process_time_header)
 
-# CORS Setup (React Frontend အတွက်)
+# CORS Setup 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -16,9 +18,9 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Routes များအား ချိတ်ဆက်ခြင်း
+# Routes 
 app.include_router(issues.router)
 
 if __name__ == "__main__":
-    import uvicorn
-    uvicorn.run("main:app", host="0.0.0.0", port=8000, reload=True)
+    PORT = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=PORT, reload=True)
